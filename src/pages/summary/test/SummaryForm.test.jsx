@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+--
 import SummaryForm from '../SummaryForm';
 import userEvent from '@testing-library/user-event';
 
@@ -35,17 +35,19 @@ test('popover starts out hidden', async () => {
   const nullPopover = screen.queryByText(
     /no ice cream will actually be delivered/i
   );
-  await expect(nullPopover).not.toBeInTheDocument();
+  expect(nullPopover).not.toBeInTheDocument();
 
   // popover appears upon mouseover of checkbox label
   const termsAndConditions = screen.getByText(/terms and conditions/i);
-  userEvent.hover(termsAndConditions);
-  const popover = screen.getByText(/no ice cream will actually be delivered/);
-  expect(popover).toBeInTheDocument();
+  await userEvent.hover(termsAndConditions);
+  const popover = screen.getByText(/no ice cream will actually be delivered/i);
+  await waitFor(() => {
+    expect(popover).toBeInTheDocument();
+  });
   //popover disappears when we mouse out
   userEvent.unhover(termsAndConditions);
-  const nullPopoverAgain = screen.queryByText(
-    /no ice cream will actually be delivered/i
+  await waitForElementToBeRemoved(() =>
+    screen.queryByText(/no ice cream will actually be delivered/i)
   );
-  expect(nullPopoverAgain).not.toBeInTheDocument();
+  // expect(nullPopoverAgain).not.toBeInTheDocument();
 });

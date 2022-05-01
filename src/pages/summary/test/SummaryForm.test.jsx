@@ -7,7 +7,7 @@ import {
 import SummaryForm from '../SummaryForm';
 import userEvent from '@testing-library/user-event';
 
-test('checkbox is unchecked by default when page loads', () => {
+test('checkbox is unchecked by default when page loads', async () => {
   render(<SummaryForm />);
   const checkbox = screen.getByRole('checkbox', {
     name: /terms and conditions/i,

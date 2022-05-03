@@ -10,11 +10,18 @@ const Options = ({ optionType }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    /*     const fetchData = async () => {
+      const response = await axios
+        .get(`http://localhost:3030/${optionType}`)
+        .then((response) => setItems(response.data))
+        .catch((error) => setError(true));
+    }; */
     axios
       .get(`http://localhost:3030/${optionType}`)
       .then((response) => setItems(response.data))
       .catch((error) => setError(true));
   }, [optionType]);
+~
 
   if (error) {
     // @ts-ignore

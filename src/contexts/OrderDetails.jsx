@@ -1,11 +1,21 @@
 import { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { pricePerItem } from '../constants';
 
+// format number as currency
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('en-us', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
+}
+
+// @ts-ignore
 const OrderDetails = createContext();
 
 //create a custom hook to check to see if we're inside a provider
 
-export function useOrderDetails() {
+function useOrderDetails() {
   const context = useContext(OrderDetails);
   if (!context) {
     throw new Error(
@@ -15,24 +25,25 @@ export function useOrderDetails() {
   return context;
 }
 
-const calculateSubtotal = (orderType, optionCounts) => {
+const calculateSubtotal = (optionType, optionCounts) => {
   let optionCount = 0;
-  for (const count of optionCounts[orderType].values()) {
+  for (const count of optionCounts[optionType].values()) {
     optionCount += count;
   }
-  return optionCount * pricePerItem[orderType];
+  return optionCount * pricePerItem[optionType];
 };
 
-export function OrderDetailsProvider(props) {
+function OrderDetailsProvider(props) {
   const [optionCounts, setOptionCounts] = useState({
     scoops: new Map(),
     toppings: new Map(),
   });
 
+  const zeroCurrency = formatCurrency(0);
   const [totals, setTotals] = useState({
-    scoops: 0,
-    toppings: 0,
-    grandTotal: 0,
+    scoops: zeroCurrency,
+    toppings: zeroCurrency,
+    grandTotal: zeroCurrency,
   });
 
   useEffect(() => {
@@ -40,9 +51,9 @@ export function OrderDetailsProvider(props) {
     const toppingsSubtotal = calculateSubtotal('toppings', optionCounts);
     const grandTotal = scoopsSubtotal + toppingsSubtotal;
     setTotals({
-      scoops: scoopsSubtotal,
-      toppings: toppingsSubtotal,
-      grandTotal,
+      scoops: formatCurrency(scoopsSubtotal),
+      toppings: formatCurrency(toppingsSubtotal),
+      grandTotal: formatCurrency(grandTotal),
     });
   }, [optionCounts]);
 
@@ -53,11 +64,15 @@ export function OrderDetailsProvider(props) {
       // update option count for this item with the new value
       const optionCountsMap = optionCounts[optionType];
       optionCountsMap.set(itemName, parseInt(newItemCount));
+
+      setOptionCounts(newOptionCounts);
     }
 
     // getter: object counts containing scoops and options, subtotals and totals
     // setter: updateOptionsCount set options counts and caluculates totals and subtotals
-    return [{ ...optionCounts, totals }];
+    return [{ ...optionCounts, totals }, updateItemCount];
   }, [optionCounts, totals]);
   return <OrderDetails.Provider value={value} {...props} />;
 }
+
+export { OrderDetailsProvider, useOrderDetails };

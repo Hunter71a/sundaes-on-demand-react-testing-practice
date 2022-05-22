@@ -1,7 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+} from '../../../test-utils/testing-library-utils';
 import OrderEntry from '../OrderEntry';
 import { rest } from 'msw';
 import { server } from '../../../mocks/server';
+import userEvent from '@testing-library/user-event';
 
 test('handles error for scoops and toppings routes', async () => {
   server.resetHandlers(
@@ -12,16 +17,11 @@ test('handles error for scoops and toppings routes', async () => {
       res(ctx.status(500))
     )
   );
+
   render(<OrderEntry />);
 
   await waitFor(async () => {
     const alerts = await screen.findAllByRole('alert');
-
-    /*   const alerts = await screen.findAllByRole('alert', {
-    name: 'An unexptected error occured. Please try again later.',
-  }); */
     expect(alerts).toHaveLength(2);
   });
 });
-
-test.skip('not a real test', () => {});

@@ -15,7 +15,7 @@ const OrderDetails = createContext();
 
 //create a custom hook to check to see if we're inside a provider
 
-function useOrderDetails() {
+export function useOrderDetails() {
   const context = useContext(OrderDetails);
   if (!context) {
     throw new Error(
@@ -33,7 +33,7 @@ const calculateSubtotal = (optionType, optionCounts) => {
   return optionCount * pricePerItem[optionType];
 };
 
-function OrderDetailsProvider(props) {
+export function OrderDetailsProvider(props) {
   const [optionCounts, setOptionCounts] = useState({
     scoops: new Map(),
     toppings: new Map(),
@@ -74,5 +74,3 @@ function OrderDetailsProvider(props) {
   }, [optionCounts, totals]);
   return <OrderDetails.Provider value={value} {...props} />;
 }
-
-export { OrderDetailsProvider, useOrderDetails };

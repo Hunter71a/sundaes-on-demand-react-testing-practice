@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 
-const ScoopOption = ({ imagePath, name, updateItemCount }) => {
+export default function ScoopOption({ imagePath, name, updateItemCount }) {
   const changeHandler = (event) => {
     updateItemCount(name, event.target.value);
   };
@@ -31,6 +31,6 @@ const ScoopOption = ({ imagePath, name, updateItemCount }) => {
       </Form.Group>
     </Col>
   );
-};
+}
 
-export default ScoopOption;
+//export default ScoopOption;
